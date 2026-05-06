@@ -10,9 +10,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     make \
     procps \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/lib/jvm/java-17-openjdk-* /usr/lib/jvm/java-17-generic
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-17-generic
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Install Spark 
@@ -47,6 +48,7 @@ ENV PYTHON_VERSION=3.13
 ENV CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-no-providers-${PYTHON_VERSION}.txt"
 
 RUN uv venv /home/airflow/.venv
+ENV PATH="/home/airflow/.venv/bin:$PATH"
 RUN uv pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
 RUN uv pip install pyspark==4.0.1 'pyspark[sql]==4.0.1'
 RUN uv pip install ruff
